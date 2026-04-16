@@ -1,0 +1,15 @@
+node_modules
+frontend/node_modules
+
+.next
+frontend/.next
+
+out
+frontend/out
+
+.DS_Store
+
+# Playwright
+frontend/test-results
+frontend/playwright-report
+
