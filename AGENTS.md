@@ -40,4 +40,6 @@
 
 1. Use latest versions of libraries and idiomatic approaches as of today
 2. Keep it simple - NEVER over-engineer, ALWAYS simplify, NO unnecessary defensive programming. No extra features - focus on simplicity.
-3. Be concise. Keep README minimal. IMPORTANT: no emojis ever
+3. Follow React style guides for composable components: keep components small, focused, reusable, and named by responsibility; prefer composition through props and children over large monolithic components or deeply nested conditional logic.
+4. Before completing dependency changes, scan installed dependencies for the latest known vulnerabilities, including supply-chain incidents such as Shai-Hulud/Sha1-Hulud and other active advisories. Run the project package-manager audit command and review relevant ecosystem security advisories; document any remaining risk instead of ignoring audit output.
+5. Be concise. Keep README minimal. IMPORTANT: no emojis ever
