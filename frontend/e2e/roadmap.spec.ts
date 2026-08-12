@@ -22,14 +22,14 @@ const appendixLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
 for (const letter of appendixLetters) {
   test(`renders Appendix ${letter} with its seeded content`, async ({ page }) => {
-    await page.getByRole("link", { name: letter, exact: true }).click();
+    await page.getByRole("combobox", { name: "Jump to appendix" }).selectOption(letter.toLowerCase());
     await expect(page).toHaveURL(new RegExp(`/roadmap/${letter.toLowerCase()}`));
     await expect(page.getByRole("heading", { name: new RegExp(`Appendix ${letter}`) })).toBeVisible();
   });
 }
 
 test("edits an appendix table cell and adds a row", async ({ page }) => {
-  await page.getByRole("link", { name: "G", exact: true }).click();
+  await page.getByRole("combobox", { name: "Jump to appendix" }).selectOption("g");
   await expect(page.getByRole("heading", { name: /Appendix G/ })).toBeVisible();
 
   await page.getByRole("button", { name: "Open", exact: true }).click();
@@ -44,7 +44,7 @@ test("edits an appendix table cell and adds a row", async ({ page }) => {
 });
 
 test("edits an Appendix H freeform section", async ({ page }) => {
-  await page.getByRole("link", { name: "H", exact: true }).click();
+  await page.getByRole("combobox", { name: "Jump to appendix" }).selectOption("h");
   await expect(page.getByRole("heading", { name: /Data Governance/ })).toBeVisible();
 
   const textarea = page.getByRole("textbox").first();
