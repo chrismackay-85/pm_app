@@ -11,6 +11,7 @@
 - Additional functionality: archive, search/filter, but Keep it simple.
 - The priority is a slick, professional, gorgeous UI/UX with very simple features
 - The app should open with dummy data populated for the single board
+- Review guide.md for the requirements. Each part of the appendix should be a separate tab that I can access and edit and changes should persist.
 
 ## Technical Details
 
