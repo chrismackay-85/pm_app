@@ -8,7 +8,7 @@
 - Each card has a title and details only
 - Drag and drop interface to move cards between columns
 - Add a new card to a column; delete an existing card
-- No more functionality: no archive, no search/filter. Keep it simple.
+- Additional functionality: archive, search/filter, but Keep it simple.
 - The priority is a slick, professional, gorgeous UI/UX with very simple features
 - The app should open with dummy data populated for the single board
 
@@ -16,7 +16,7 @@
 
 - Implemented as a modern NextJS app, client rendered
 - The NextJS app should be created in a subdirectory `frontend`
-- No persistence
+- Local persistence
 - No user management for the MVP
 - Use popular libraries
 - As simple as possible but with an elegant UI
