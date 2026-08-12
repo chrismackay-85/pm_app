@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+@theme {
+  /* Primary brand colors */
+  --color-brand-blue: #3a55ff;
+  --color-bright-blue: #009bff;
+  --color-brand-purple: #770bff;
+  --color-brand-cyan: #0096fa;
+  --color-light-cyan: #84c9f7;
+
+  /* Neutrals */
+  --color-dark-primary: #090a0f;
+  --color-dark-secondary: #10121a;
+  --color-light-gray: #ebf0f5;
+  --color-muted-gray: #c4d3e3;
+
+  /* Fonts */
+  --font-display: var(--font-display);
+  --font-serif-accent: var(--font-serif-accent);
+  --font-mono: var(--font-mono);
+
+  /* Radii */
+  --radius-card: 12px;
+  --radius-button: 8px;
+  --radius-pill: 20px;
+
+  /* Shadows */
+  --shadow-base: 0 2px 3px rgba(7, 7, 8, 0.1);
+  --shadow-large: 0 2px 3px rgba(7, 7, 8, 0.1), 0 14px 14px rgba(7, 7, 8, 0.1),
+    0 45px 45px rgba(7, 7, 8, 0.1);
+}
+
+:root {
+  --gradient-brand: linear-gradient(90deg, #0096fa 0%, #770bff 100%);
+  --gradient-cta: linear-gradient(95deg, #009bff 0%, #3a55ff 100%);
+}
+
+body {
+  font-family: var(--font-display), Inter, system-ui, sans-serif;
+  color: var(--color-dark-primary);
+}
+
+@layer utilities {
+  .font-accent {
+    font-family: var(--font-serif-accent), Georgia, serif;
+    font-style: italic;
+  }
+
+  .text-h1 {
+    font-size: 66px;
+    font-weight: 600;
+    letter-spacing: -2px;
+  }
+  .text-h2 {
+    font-size: 48px;
+    font-weight: 600;
+    letter-spacing: -1px;
+  }
+  .text-h3 {
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+  .text-h4 {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+  }
+  .text-h5 {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+  }
+  .text-body-1 {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+  }
+  .text-body-2 {
+    font-size: 16px;
+    font-weight: 400;
+  }
+  .text-body-3 {
+    font-size: 14px;
+    font-weight: 400;
+  }
+  .text-overline {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .bg-gradient-brand {
+    background: var(--gradient-brand);
+  }
+  .bg-gradient-cta {
+    background: var(--gradient-cta);
+  }
+
+  .shadow-brand {
+    box-shadow: var(--shadow-base);
+  }
+  .shadow-brand-lg {
+    box-shadow: var(--shadow-large);
+  }
+}
