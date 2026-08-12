@@ -18,6 +18,7 @@ import { Column } from "./Column";
 import { CardContent } from "./CardContent";
 import { SearchBox } from "./SearchBox";
 import { AddCardDialog } from "./AddCardDialog";
+import { AddColumnButton } from "./AddColumnButton";
 import type { KanbanCard } from "@/lib/types";
 
 function filterColumn(ids: string[], cardMap: Record<string, KanbanCard>, query: string) {
@@ -34,6 +35,7 @@ export function BoardView() {
   const deleteCard = useKanbanStore((s) => s.deleteCard);
   const archiveCard = useKanbanStore((s) => s.archiveCard);
   const renameColumn = useKanbanStore((s) => s.renameColumn);
+  const addColumn = useKanbanStore((s) => s.addColumn);
   const moveCard = useKanbanStore((s) => s.moveCard);
 
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -85,7 +87,7 @@ export function BoardView() {
   const activeCard = activeId ? cards[activeId] : null;
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-1 flex-col gap-6 px-6 py-8">
+    <div className="flex flex-1 flex-col gap-6 px-6 py-8">
       <div className="flex items-center justify-between">
         <h1 className="text-h3 text-dark-primary">
           Rollout <span className="font-accent text-bright-blue">board</span>
@@ -120,6 +122,7 @@ export function BoardView() {
               onAddCard={setAddTargetColumn}
             />
           ))}
+          <AddColumnButton onAdd={addColumn} />
         </div>
 
         <DragOverlay>

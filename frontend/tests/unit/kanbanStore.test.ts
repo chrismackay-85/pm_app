@@ -104,6 +104,18 @@ describe("renameColumn", () => {
   });
 });
 
+describe("addColumn", () => {
+  it("appends a new column with an empty card order", () => {
+    const { addColumn } = useKanbanStore.getState();
+    addColumn("Icebox");
+    const state = useKanbanStore.getState();
+    expect(state.columns).toHaveLength(6);
+    const newColumn = state.columns[state.columns.length - 1];
+    expect(newColumn.name).toBe("Icebox");
+    expect(state.cardOrder[newColumn.id]).toEqual([]);
+  });
+});
+
 describe("setSearchQuery / matchesQuery", () => {
   it("filters cards by title or details, case-insensitively", () => {
     const { setSearchQuery } = useKanbanStore.getState();

@@ -33,7 +33,10 @@ export function Column({ column, cards, activeId, onRename, onArchive, onDelete,
   }
 
   return (
-    <div className="flex w-72 shrink-0 flex-col rounded-card bg-light-gray p-3">
+    <div
+      data-column-id={column.id}
+      className="flex min-w-[220px] flex-1 flex-col rounded-card bg-light-gray p-3"
+    >
       {editing ? (
         <input
           autoFocus

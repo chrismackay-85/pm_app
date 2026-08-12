@@ -7,6 +7,10 @@ function makeId() {
   return `card-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+function makeColumnId() {
+  return `column-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
 interface KanbanState {
   columns: KanbanColumn[];
   cards: Record<string, KanbanCard>;
@@ -20,6 +24,7 @@ interface KanbanState {
   archiveCard: (cardId: string) => void;
   unarchiveCard: (cardId: string) => void;
   renameColumn: (columnId: string, name: string) => void;
+  addColumn: (name: string) => void;
   setSearchQuery: (query: string) => void;
 }
 
@@ -120,6 +125,15 @@ export const useKanbanStore = create<KanbanState>()(
             column.id === columnId ? { ...column, name } : column
           ),
         })),
+
+      addColumn: (name) =>
+        set((state) => {
+          const id = makeColumnId();
+          return {
+            columns: [...state.columns, { id, name }],
+            cardOrder: { ...state.cardOrder, [id]: [] },
+          };
+        }),
 
       setSearchQuery: (query) => set({ searchQuery: query }),
     }),

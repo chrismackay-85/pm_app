@@ -15,7 +15,7 @@ export function TopNav() {
   return (
     <header className="border-b border-muted-gray/60 bg-white">
       <div className="h-1 w-full bg-gradient-brand" />
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <div className="flex items-center justify-between px-6 py-4">
         <span className="text-h5 text-dark-primary">
           Pattern <span className="font-accent text-bright-blue">PM</span>
         </span>

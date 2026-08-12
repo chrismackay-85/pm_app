@@ -47,9 +47,7 @@ test("drags a card to a different column", async ({ page }) => {
 });
 
 test("reorders a card within the same column", async ({ page }) => {
-  const column = page.locator("div.w-72", {
-    has: page.getByRole("button", { name: "In Review · 2" }),
-  });
+  const column = page.locator('[data-column-id="in-review"]');
   await dragCard(page, "UX Mockups (Sentiment & Onboarding Status)", "Field Mapping & API Documentation");
 
   const titles = column.locator("h4");
@@ -66,6 +64,14 @@ test("adds a new card via the dialog", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "New rollout task" })).toBeVisible();
 });
 
+test("adds a new column", async ({ page }) => {
+  await page.getByRole("button", { name: "Add column" }).click();
+  await page.getByPlaceholder("Column name").fill("QA Check");
+  await page.getByPlaceholder("Column name").press("Enter");
+
+  await expect(page.getByRole("button", { name: "QA Check · 0" })).toBeVisible();
+});
+
 test("deletes a card", async ({ page }) => {
   const card = page.locator('[role="button"][aria-roledescription="sortable"]', {
     has: page.locator('h4:text-is("Discovery")'),
@@ -78,7 +84,7 @@ test("deletes a card", async ({ page }) => {
 });
 
 test("renames a column inline", async ({ page }) => {
-  const backlogColumn = page.locator("div.w-72").first();
+  const backlogColumn = page.locator('[data-column-id="backlog"]');
   await backlogColumn.getByRole("button", { name: "Backlog · 4" }).click();
   const input = backlogColumn.locator("input");
   await input.fill("Icebox");
