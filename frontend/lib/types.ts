@@ -35,3 +35,22 @@ export interface FreeformSection {
   heading: string;
   body: string;
 }
+
+export interface MeetingNoteEntry {
+  id: string;
+  date: string;
+  title: string;
+  notes: string;
+}
+
+export interface DataDictionaryRow {
+  id: string;
+  fieldName: string;
+  description: string;
+  dataType: string;
+  sourceSystem: string;
+  owner: string;
+  piiSensitive: boolean;
+  lastUpdated: string;
+  tableOrDatabase: string;
+}

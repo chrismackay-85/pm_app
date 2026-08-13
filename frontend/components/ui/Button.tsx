@@ -9,7 +9,7 @@ const variantClasses: Record<NonNullable<ButtonProps["variant"]>, string> = {
   primary: "bg-gradient-cta text-white shadow-brand hover:opacity-90",
   secondary: "bg-light-gray text-dark-primary hover:bg-muted-gray/40",
   ghost: "text-dark-primary hover:bg-light-gray",
-  danger: "text-brand-purple hover:bg-light-gray",
+  danger: "bg-brand-purple text-white shadow-brand hover:opacity-90",
 };
 
 export function Button({ variant = "primary", className, ...props }: ButtonProps) {

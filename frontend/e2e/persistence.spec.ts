@@ -48,3 +48,23 @@ test("Kanban board edits survive a page reload", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Discovery" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Backlog · 5" })).toBeVisible();
 });
+
+test("Notes edits survive a page reload", async ({ page }) => {
+  await page.goto("/notes/meeting-notes");
+  await page.getByRole("button", { name: "Add meeting note" }).click();
+  const titleInput = page.getByPlaceholder("Meeting title").first();
+  await titleInput.fill("Persisted meeting");
+  await titleInput.blur();
+
+  await page.goto("/notes/data-dictionary");
+  await page.getByRole("button", { name: "customer_email", exact: true }).click();
+  const input = page.locator('input:not([type="checkbox"])');
+  await input.fill("customer_phone");
+  await input.press("Enter");
+
+  await page.reload();
+
+  await expect(page.getByRole("button", { name: "customer_phone" })).toBeVisible();
+  await page.goto("/notes/meeting-notes");
+  await expect(page.locator('input[value="Persisted meeting"]')).toBeVisible();
+});

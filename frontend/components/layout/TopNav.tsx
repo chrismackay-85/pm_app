@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 const sections = [
   { href: "/board", label: "Board" },
   { href: "/roadmap", label: "Roadmap" },
+  { href: "/notes", label: "Notes" },
 ];
 
 export function TopNav() {
