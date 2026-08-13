@@ -1,15 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { useNotesStore } from "@/lib/notesStore";
 import { TableShell, tableRowClassName } from "@/components/ui/TableShell";
-import { EditableCell } from "@/components/roadmap/EditableCell";
+import { AutocompleteCell } from "@/components/notes/AutocompleteCell";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import type { DataDictionaryRow } from "@/lib/types";
 
-const columns: { key: keyof Omit<DataDictionaryRow, "id" | "piiSensitive">; label: string }[] = [
+type TextField = "fieldName" | "description" | "dataType" | "sourceSystem" | "owner" | "tableOrDatabase";
+
+const textFieldOrder: TextField[] = [
+  "fieldName",
+  "description",
+  "dataType",
+  "sourceSystem",
+  "owner",
+  "tableOrDatabase",
+];
+
+const columns: { key: TextField; label: string }[] = [
   { key: "fieldName", label: "Field Name" },
   { key: "description", label: "Description" },
   { key: "dataType", label: "Data Type" },
@@ -17,16 +28,17 @@ const columns: { key: keyof Omit<DataDictionaryRow, "id" | "piiSensitive">; labe
   { key: "owner", label: "Owner" },
 ];
 
-const trailingColumns: { key: keyof Omit<DataDictionaryRow, "id" | "piiSensitive">; label: string }[] = [
+const headerColumns = [
+  ...columns,
+  { key: "piiSensitive", label: "PII/Sensitive" },
   { key: "lastUpdated", label: "Last Updated" },
   { key: "tableOrDatabase", label: "Table/Database" },
 ];
 
-const headerColumns = [
-  ...columns,
-  { key: "piiSensitive", label: "PII/Sensitive" },
-  ...trailingColumns,
-];
+interface CellRef {
+  rowId: string;
+  field: TextField;
+}
 
 export function DataDictionaryView() {
   const dataDictionary = useNotesStore((s) => s.dataDictionary);
@@ -36,6 +48,42 @@ export function DataDictionaryView() {
   const deleteDictionaryRow = useNotesStore((s) => s.deleteDictionaryRow);
 
   const [rowPendingDelete, setRowPendingDelete] = useState<DataDictionaryRow | null>(null);
+  const [editingCell, setEditingCell] = useState<CellRef | null>(null);
+
+  const suggestionsByField = useMemo(() => {
+    const result: Record<TextField, string[]> = {
+      fieldName: [],
+      description: [],
+      dataType: [],
+      sourceSystem: [],
+      owner: [],
+      tableOrDatabase: [],
+    };
+    for (const field of textFieldOrder) {
+      result[field] = Array.from(
+        new Set(dataDictionary.map((row) => row[field]).filter((v) => v.trim() !== ""))
+      );
+    }
+    return result;
+  }, [dataDictionary]);
+
+  const tabSequence = useMemo(() => {
+    const sequence: CellRef[] = [];
+    for (const row of dataDictionary) {
+      for (const field of textFieldOrder) {
+        sequence.push({ rowId: row.id, field });
+      }
+    }
+    return sequence;
+  }, [dataDictionary]);
+
+  function advanceFrom(current: CellRef) {
+    const index = tabSequence.findIndex(
+      (cell) => cell.rowId === current.rowId && cell.field === current.field
+    );
+    const next = index >= 0 ? tabSequence[index + 1] : undefined;
+    setEditingCell(next ?? null);
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -44,9 +92,14 @@ export function DataDictionaryView() {
           <tr key={row.id} className={tableRowClassName(index)}>
             {columns.map((column) => (
               <td key={column.key} className="px-1 py-1 align-top">
-                <EditableCell
+                <AutocompleteCell
                   value={row[column.key]}
+                  suggestions={suggestionsByField[column.key].filter((v) => v !== row[column.key])}
+                  isEditing={editingCell?.rowId === row.id && editingCell.field === column.key}
+                  onStartEdit={() => setEditingCell({ rowId: row.id, field: column.key })}
                   onCommit={(value) => updateDictionaryCell(row.id, column.key, value)}
+                  onTabNext={() => advanceFrom({ rowId: row.id, field: column.key })}
+                  onExitEdit={() => setEditingCell(null)}
                 />
               </td>
             ))}
@@ -59,14 +112,26 @@ export function DataDictionaryView() {
                 className="h-4 w-4 accent-brand-blue"
               />
             </td>
-            {trailingColumns.map((column) => (
-              <td key={column.key} className="px-1 py-1 align-top">
-                <EditableCell
-                  value={row[column.key]}
-                  onCommit={(value) => updateDictionaryCell(row.id, column.key, value)}
-                />
-              </td>
-            ))}
+            <td className="px-2 py-1 align-top">
+              <input
+                type="date"
+                value={row.lastUpdated}
+                onChange={(e) => updateDictionaryCell(row.id, "lastUpdated", e.target.value)}
+                aria-label={`Last updated for ${row.fieldName || "row " + (index + 1)}`}
+                className="w-full rounded-button border border-transparent px-2 py-1 text-body-3 text-dark-primary outline-none hover:border-muted-gray/60 focus:border-brand-blue"
+              />
+            </td>
+            <td className="px-1 py-1 align-top">
+              <AutocompleteCell
+                value={row.tableOrDatabase}
+                suggestions={suggestionsByField.tableOrDatabase.filter((v) => v !== row.tableOrDatabase)}
+                isEditing={editingCell?.rowId === row.id && editingCell.field === "tableOrDatabase"}
+                onStartEdit={() => setEditingCell({ rowId: row.id, field: "tableOrDatabase" })}
+                onCommit={(value) => updateDictionaryCell(row.id, "tableOrDatabase", value)}
+                onTabNext={() => advanceFrom({ rowId: row.id, field: "tableOrDatabase" })}
+                onExitEdit={() => setEditingCell(null)}
+              />
+            </td>
             <td className="px-2 py-1 text-center align-top">
               <button
                 type="button"
@@ -94,7 +159,9 @@ export function DataDictionaryView() {
             : "Are you sure you want to delete this row? This can't be undone."
         }
         onConfirm={() => {
-          if (rowPendingDelete) deleteDictionaryRow(rowPendingDelete.id);
+          if (!rowPendingDelete) return;
+          if (editingCell?.rowId === rowPendingDelete.id) setEditingCell(null);
+          deleteDictionaryRow(rowPendingDelete.id);
         }}
       />
     </div>

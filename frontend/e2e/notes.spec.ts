@@ -52,7 +52,7 @@ test("edits a data dictionary cell, toggles PII, and adds a row", async ({ page 
   await page.getByRole("combobox", { name: "Jump to notes tab" }).selectOption("data-dictionary");
 
   await page.getByRole("button", { name: "customer_email", exact: true }).click();
-  const editInput = page.locator('input:not([type="checkbox"])');
+  const editInput = page.locator("input:not([type])");
   await editInput.fill("customer_phone");
   await editInput.press("Enter");
   await expect(page.getByRole("button", { name: "customer_phone" })).toBeVisible();
@@ -86,4 +86,41 @@ test("asks for confirmation before deleting a data dictionary row", async ({ pag
   await page.getByRole("dialog", { name: "Delete row" }).getByRole("button", { name: "Delete" }).click();
   await expect(page.locator("tbody tr")).toHaveCount(rowCountBefore - 1);
   await expect(page.getByRole("button", { name: "customer_email", exact: true })).toHaveCount(0);
+});
+
+test("tab moves to the next data dictionary field already in edit mode", async ({ page }) => {
+  await page.getByRole("combobox", { name: "Jump to notes tab" }).selectOption("data-dictionary");
+  const firstRow = page.locator("tbody tr").first();
+
+  await firstRow.getByRole("button", { name: "customer_email", exact: true }).click();
+  const fieldNameInput = firstRow.locator("input:not([type])");
+  await expect(fieldNameInput).toBeFocused();
+
+  await fieldNameInput.press("Tab");
+
+  const descriptionInput = firstRow.locator("td").nth(1).locator("input:not([type])");
+  await expect(descriptionInput).toBeFocused();
+});
+
+test("suggests an existing column value and accepts it on Tab", async ({ page }) => {
+  await page.getByRole("combobox", { name: "Jump to notes tab" }).selectOption("data-dictionary");
+  const secondRow = page.locator("tbody tr").nth(1);
+  const sourceSystemCell = secondRow.locator("td").nth(3);
+
+  await sourceSystemCell.getByRole("button").click();
+  const input = sourceSystemCell.locator("input:not([type])");
+  await input.pressSequentially("CRM D");
+  await input.press("Tab");
+
+  await expect(sourceSystemCell.getByRole("button", { name: "CRM Database", exact: true })).toBeVisible();
+});
+
+test("lets you pick a Last Updated date instead of typing it", async ({ page }) => {
+  await page.getByRole("combobox", { name: "Jump to notes tab" }).selectOption("data-dictionary");
+  const firstRow = page.locator("tbody tr").first();
+  const dateInput = firstRow.getByLabel(/Last updated for customer_email/);
+
+  await expect(dateInput).toHaveAttribute("type", "date");
+  await dateInput.fill("2026-09-01");
+  await expect(dateInput).toHaveValue("2026-09-01");
 });

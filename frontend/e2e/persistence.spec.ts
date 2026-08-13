@@ -58,7 +58,7 @@ test("Notes edits survive a page reload", async ({ page }) => {
 
   await page.goto("/notes/data-dictionary");
   await page.getByRole("button", { name: "customer_email", exact: true }).click();
-  const input = page.locator('input:not([type="checkbox"])');
+  const input = page.locator("input:not([type])");
   await input.fill("customer_phone");
   await input.press("Enter");
 
